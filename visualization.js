@@ -5,19 +5,28 @@
  * @author Greg Payne
  */
 
-// http://code.google.com/apis/chart/image/docs/chart_playground.html
 // http://code.google.com/apis/ajax/playground/?type=visualization
-//document.write('<script type="text/javascript" src="' + (("https:" == document.location.protocol) ? "https://" : "http://") + 'www.google.com/jsapi?autoload=' + encodeURIComponent('{"modules":[{"name":"visualization","version":"1","packages":["charteditor"]}]}') + '"></script>');
 document.write('<script type="text/javascript" src="' + (("https:" == document.location.protocol) ? "https://" : "http://") + 'www.google.com/jsapi?autoload=' + encodeURIComponent('{"modules":[{"name":"visualization","version":"1"}]}') + '"></script>');
-if (typeof console == 'undefined') {
-	console = {"log" : function(){}};
-}
 (function($){
 	var _uniq_id = 0;
 	function uniq_id() {
 		_uniq_id++;
 		return 'html5-gv-id-' + _uniq_id;
 	}
+	
+	/* <witti:remove match="@_log\(.*?\);@s"> */
+	var _log = null;
+	if ($.browser.msie && $.browser.version=="6.0" || typeof console != 'object') {
+		_log = function(el, m) {
+			$(el).append('<div>' + m + '</div>');
+		};
+	}
+	else {
+		_log = function(el, m) {
+			console.log(el.id + ": " + m);
+		};
+	}
+	/* </witti:remove> */
 	
 	// Create a key-pair hash to translate case and/or any aliases to match Google's naming scheme.
 	var _map = {"type" : "chartType"};
@@ -31,31 +40,32 @@ if (typeof console == 'undefined') {
 			$(this).change(function(){
 				$(this).removeAttr('data-gv-applied');
 			});
-			console.log(this.id + ": loading");
-			$(this).append('<p>Loading chart...</p>');
+			_log(this, 'Preparing to load chart');
 			if (!this.id) {
 				this.id = uniq_id();
+				_log(this, "Set id to " + this.id);
 			}
 			
 			/*
 			 * chartType: Table, ColumnChart
+			 * Rather than containerId, we're going to pass the element at the end
+			 *   to provide better compatibility (fixed issues in IE6/IE7).
 			 */
 			var cfg = {
 				'chartType' : 'Table',
-				'containerId' : this.id,
 				'dataTable' : null,
 				'options' : {
 				}
 			};
+			_log(this, "Chart will load in " + this.id);
 			
 			// Set a minimum height if necessary.
 			if ($(this).width() / $(this).height() > 20) {
 				$(this).height(250);
 			}
 			
-			console.log(this.id + ": setting defaults");
 			// Customize the config using HTML5 attributes.
-			console.log(this.id + ": parsing config");
+			_log(this, "Parsing config");
 			for (var i = 0; i < this.attributes.length; i++) {
 				var k = this.attributes[i].name.toLowerCase();
 				var v = this.attributes[i].value;
@@ -111,39 +121,38 @@ if (typeof console == 'undefined') {
 			}
 			
 			// Build the DataTable.
-			console.log(this.id + ": loading datatable");
+			_log(this, "loading datatable");
 			var wrap_ready = function(){};
 			var dt = new google.visualization.DataTable();
 			var table = null;
 			cfg.dataTable = dt;
 			if ($('table:has(tbody):not(.google-visualization-table-table)', this).length == 1) {
 				// Look for a table within this element.
-				table = $('table:has(tbody)', this);
+				// The sticky-* class logic is a Drupal optimization.
+				table = $("table:has(tbody):not(.sticky-header)", this).removeClass('sticky-table sticky-enabled');
 				$('caption:first', table).each(function(){
 					cfg.options['title'] = $(this).text();
 				});
 				table.insertAfter(this).hide();
-				dt_load_table(dt, table);
+				$("table.sticky-header", this).remove();
+				dt_load_table(dt, table, this);
 			}
 			else if ($(this).eq(0).attr('data-gv-datatable')) {
-				console.log(this.id + ": loading datatable by id");
-				
+				_log(this, 'Loading data by id');
 				table = document.getElementById($(this).eq(0).attr('data-gv-datatable'));
 				if (table) {
-					dt_load_table(dt, table);
-					$(this).append('<p>Load dt ' + '</p>');
+					_log(this, 'loading the data');
+					dt_load_table(dt, table, this);
 					if (cfg.chartType == 'Table') {
 						$(table).hide();
 					}
 					else if (cfg.options.datatablehide) {
 						$(table).hide();
 					}
-					$(this).append('<p>Load dt ' + '</p>');
 				}
 			}
 			else {
-				console.log(this.id + ": error");
-				$(this).append('Unable to locate datatable');
+				_log(this, "datatable error - unable to locate dt");
 				return;
 			}
 			
@@ -223,21 +232,29 @@ if (typeof console == 'undefined') {
 				};
 			}
 			
-			console.log(this.id + ": drawing chart");
+			/* <witti:remove> */
+			for (i in cfg) {
+				_log(this, i + " = " + cfg[i]);
+			}
+			/* </witti:remove> */
+			
+			_log(this, "drawing chart");
 	        var wrap = new google.visualization.ChartWrapper(cfg);
 	        google.visualization.events.addListener(wrap, 'ready', wrap_ready);
-	        wrap.draw();
+	        wrap.draw($(this)[0]);
 	        $(this).data('gv_wrapper', wrap);
 		});
 	}
 	
-	function dt_load_table(dt, table) {
+	function dt_load_table(dt, table, $log) {
 		$('thead tr', table).children('td,th').each(function(ix){
 			var cell = $('tbody tr:first', table).children('td,th').eq(ix);
 			if (cell.is('th') || isNaN(cell.text())) {
+				_log($log, 'Adding string column: ' + $(this).text());
 				dt.addColumn('string', $(this).text());
 			}
 			else {
+				_log($log, 'Adding number column: ' + $(this).text());
 				dt.addColumn('number', $(this).text());
 			}
 		});
@@ -259,6 +276,7 @@ if (typeof console == 'undefined') {
 					}
 				}
 			});
+			_log($log, 'Added row: ' + row.join(', '));
 			dt.addRow(row);
 		});
 	}		
