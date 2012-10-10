@@ -1,8 +1,9 @@
 /**
  * Witti Visualization
+ * http://www.witti.ws/project/witti-visualization
  * 
- * Create Google Visualizations based on HTML5 markup.
- * @author Greg Payne
+ * Copyright (c) 2012, Greg Payne
+ * Dual licensed under the MIT and GPL licenses.
  */
 
 // http://code.google.com/apis/ajax/playground/?type=visualization
