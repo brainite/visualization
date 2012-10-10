@@ -1,3 +1,10 @@
+/**
+ * Witti Visualization
+ * 
+ * Create Google Visualizations based on HTML5 markup.
+ * @author Greg Payne
+ */
+
 // http://code.google.com/apis/chart/image/docs/chart_playground.html
 // http://code.google.com/apis/ajax/playground/?type=visualization
 //document.write('<script type="text/javascript" src="' + (("https:" == document.location.protocol) ? "https://" : "http://") + 'www.google.com/jsapi?autoload=' + encodeURIComponent('{"modules":[{"name":"visualization","version":"1","packages":["charteditor"]}]}') + '"></script>');
@@ -11,6 +18,13 @@ if (typeof console == 'undefined') {
 		_uniq_id++;
 		return 'html5-gv-id-' + _uniq_id;
 	}
+	
+	// Create a key-pair hash to translate case and/or any aliases to match Google's naming scheme.
+	var _map = {"type" : "chartType"};
+	$('axisTitlesPosition backgroundColor chartArea enableInteractivity fontSize fontName gridlineColor hAxis isStacked legendTextStyle logScale maxAlternation maxValue minValue reverseCategories showTextEvery slantedText slantedTextAngle strokeWidth textPosition textStyle titlePosition titleTextStyle tooltipTextStyle vAxes vAxis viewWindowMode viewWindow'
+		.split(' ')).each(function(){_map[this.toLowerCase()] = this});
+	
+	// Load the charts from the HTML5 configurations.
 	var html5load = function() {
 		$(this).each(function(){
 			$(this).attr('data-gv-applied', 'true');
@@ -41,40 +55,6 @@ if (typeof console == 'undefined') {
 			
 			console.log(this.id + ": setting defaults");
 			// Customize the config using HTML5 attributes.
-			var map = {
-				/* Readability adjustments. */
-				"type" : "chartType",
-			};
-			$([
-			   'axisTitlesPosition',
-			   'backgroundColor',
-			   'chartArea',
-			   'enableInteractivity',
-			   'fontSize',
-			   'fontName',
-			   'gridlineColor',
-			   'hAxis',
-			   'isStacked',
-			   'legendTextStyle',
-			   'logScale',
-			   'maxAlternation',
-			   'maxValue',
-			   'minValue',
-			   'reverseCategories',
-			   'showTextEvery',
-			   'slantedText',
-			   'slantedTextAngle',
-			   'strokeWidth',
-			   'textPosition',
-			   'textStyle',
-			   'titlePosition',
-			   'titleTextStyle',
-			   'tooltipTextStyle',
-			   'vAxes',
-			   'vAxis',
-			   'viewWindowMode',
-			   'viewWindow'
-			   ]).each(function(){map[this.toLowerCase()] = this});
 			console.log(this.id + ": parsing config");
 			for (var i = 0; i < this.attributes.length; i++) {
 				var k = this.attributes[i].name.toLowerCase();
@@ -103,8 +83,8 @@ if (typeof console == 'undefined') {
 				}
 				if (k.substr(0, 8) == 'data-gv-') {
 					k = k.substr(8);
-					if (typeof map[k] != 'undefined') {
-						k = map[k];
+					if (typeof _map[k] != 'undefined') {
+						k = _map[k];
 					}
 					if (typeof cfg[k] == 'undefined') {
 						tgt = cfg.options;
@@ -114,8 +94,8 @@ if (typeof console == 'undefined') {
 					}
 					while (k.indexOf('.') != -1) {
 						var k1 = k.substr(0, k.indexOf('.'));
-						if (typeof map[k1] != 'undefined') {
-							k1 = map[k1];
+						if (typeof _map[k1] != 'undefined') {
+							k1 = _map[k1];
 						}
 						k = k.substr(k1.length + 1);
 						if (typeof tgt[k1] == 'undefined') {
@@ -123,8 +103,8 @@ if (typeof console == 'undefined') {
 						}
 						tgt = tgt[k1];
 					}
-					if (typeof map[k] != 'undefined') {
-						k = map[k];
+					if (typeof _map[k] != 'undefined') {
+						k = _map[k];
 					}
 					tgt[k] = v;
 				}
