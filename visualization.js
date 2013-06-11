@@ -1,8 +1,8 @@
 /**
- * Witti Visualization 1.0
+ * Witti Visualization 1.1b
  * http://www.witti.ws/project/witti-visualization
  * 
- * Copyright (c) 2012, Greg Payne
+ * Copyright (c) 2012-2013, Greg Payne
  * Dual licensed under the MIT and GPL licenses.
  */
 
@@ -136,14 +136,14 @@ document.write('<script type="text/javascript" src="' + (("https:" == document.l
 				});
 				table.insertAfter(this).hide();
 				$("table.sticky-header", this).remove();
-				dt_load_table(dt, table, this);
+				dt_load_table(dt, table, this, cfg.options);
 			}
 			else if ($(this).eq(0).attr('data-gv-datatable')) {
 				_log(this, 'Loading data by id');
 				table = document.getElementById($(this).eq(0).attr('data-gv-datatable'));
 				if (table) {
 					_log(this, 'loading the data');
-					dt_load_table(dt, table, this);
+					dt_load_table(dt, table, this, cfg.options);
 					if (cfg.chartType == 'Table') {
 						$(table).hide();
 					}
@@ -247,39 +247,92 @@ document.write('<script type="text/javascript" src="' + (("https:" == document.l
 		});
 	}
 	
-	function dt_load_table(dt, table, $log) {
-		$('thead tr', table).children('td,th').each(function(ix){
-			var cell = $('tbody tr:first', table).children('td,th').eq(ix);
-			if (cell.is('th') || isNaN(cell.text())) {
-				_log($log, 'Adding string column: ' + $(this).text());
-				dt.addColumn('string', $(this).text());
-			}
-			else {
-				_log($log, 'Adding number column: ' + $(this).text());
-				dt.addColumn('number', $(this).text());
-			}
-		});
-		$('tbody tr', table).each(function(){
-			var row = [];
-			$('th,td', this).each(function(){
-				var t = $(this).text();
-				if (t == '') {
-					row.push(null);
+	function dt_load_table(dt, table, $log, options) {
+		if (options.datatablerotate) {
+			_log($log, 'Rotating the datatable.');
+			var colIndex = 0;
+			var colType = 'string';
+			$('tr', table).each(function(){
+				var rowIndex = -1;
+				$(this).children('td,th').each(function(ix){
+					var cell = $(this);
+					if (rowIndex == -1) {
+						var firstData = cell.next('td,th');
+						if (firstData.is('th') || isNaN(firstData.text())) {
+							_log($log, 'Adding string column: ' + $(this).text());
+							colType = 'string';
+						}
+						else {
+							_log($log, 'Adding number column: ' + $(this).text());
+							colType = 'number';
+						}
+						dt.addColumn(colType, $(this).text());
+					}
+					else {
+						var t = cell.text();
+						if (t == '') {
+							t = null;
+						}
+						else {
+							switch (colType) {
+							case 'number':
+								// type-cast to number.
+								t = 1*t;
+								break;
+							default:
+								// keep as string.
+								break;
+							}
+						}
+						
+						if (colIndex == 0) {
+							_log($log, 'New row ' + rowIndex + ' to:' + t);
+							dt.addRow([t]);
+						}
+						else {
+							_log($log, 'Set ' + rowIndex + ',' + colIndex + ' to:' + t);
+							dt.setCell(rowIndex, colIndex, t);
+						}
+					}
+					rowIndex++;
+				});
+				colIndex++;
+			});
+		}
+		else {
+			$('thead tr', table).children('td,th').each(function(ix){
+				var cell = $('tbody tr:first', table).children('td,th').eq(ix);
+				if (cell.is('th') || isNaN(cell.text())) {
+					_log($log, 'Adding string column: ' + $(this).text());
+					dt.addColumn('string', $(this).text());
 				}
 				else {
-					switch (dt.getColumnType(row.length)) {
-					case 'number':
-						row.push(1 * t);
-						break;
-					default:
-						row.push(t);
-						break;
-					}
+					_log($log, 'Adding number column: ' + $(this).text());
+					dt.addColumn('number', $(this).text());
 				}
 			});
-			_log($log, 'Added row: ' + row.join(', '));
-			dt.addRow(row);
-		});
+			$('tbody tr', table).each(function(){
+				var row = [];
+				$('th,td', this).each(function(){
+					var t = $(this).text();
+					if (t == '') {
+						row.push(null);
+					}
+					else {
+						switch (dt.getColumnType(row.length)) {
+						case 'number':
+							row.push(1 * t);
+							break;
+						default:
+							row.push(t);
+							break;
+						}
+					}
+				});
+				_log($log, 'Added row: ' + row.join(', '));
+				dt.addRow(row);
+			});
+		}
 	}		
 	
 	
