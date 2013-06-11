@@ -1,5 +1,5 @@
 /**
- * Witti Visualization
+ * Witti Visualization 1.0
  * http://www.witti.ws/project/witti-visualization
  * 
  * Copyright (c) 2012, Greg Payne
