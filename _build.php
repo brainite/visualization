@@ -64,6 +64,8 @@ if (preg_match('~@version\s+([\d\.]+)\s~s', $version_js_tmp, $arr)) {
 if ($version_js !== $version_git) {
   $cmd = "git tag -a $version_js -m 'version $version_js'";
   system($cmd);
+  $cmd = "git tag -d $version_git";
+  system($cmd);
   $cmd = "git push origin --tags";
   system($cmd);
 }
