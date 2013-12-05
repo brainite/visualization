@@ -6,6 +6,7 @@ if (isset($_SERVER['REQUEST_METHOD'])) {
 
 chdir(__DIR__);
 
+// Handle the JS files.
 $js_files = array(
   'visualization.js' => 'visualization.min.js',
 );
@@ -50,4 +51,19 @@ foreach ($js_files as $src_path => $min_path) {
     file_put_contents($min_path, $min_js);
   }
   unlink($tmp_path);
+}
+
+// Handle the git tag and version
+$version_git = trim(`git tag`);
+$version_js = 'v0';
+reset($js_files);
+$version_js_tmp = file_get_contents(key($js_files));
+if (preg_match('~@version\s+([\d\.]+)\s~s', $version_js_tmp, $arr)) {
+  $version_js = 'v' . $arr[1];
+}
+if ($version_js !== $version_git) {
+  $cmd = "git tag -a $version_js -m 'version $version_js'";
+  system($cmd);
+  $cmd = "git push origin --tags";
+  system($cmd);
 }
