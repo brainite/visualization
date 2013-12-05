@@ -1,5 +1,6 @@
 /**
- * Witti Visualization 1.1
+ * Witti Visualization
+ * @version 1.1.1
  * http://www.witti.ws/project/witti-visualization
  * 
  * Copyright (c) 2012-2013, Greg Payne
@@ -8,6 +9,14 @@
 
 // http://code.google.com/apis/ajax/playground/?type=visualization
 document.write('<script type="text/javascript" src="' + (("https:" == document.location.protocol) ? "https://" : "http://") + 'www.google.com/jsapi?autoload=' + encodeURIComponent('{"modules":[{"name":"visualization","version":"1"}]}') + '"></script>');
+if (typeof JSON != 'object' || typeof JSON.stringify != 'function') {
+  document.write('<script src="http://www.json.org/json2.js"></script>');
+}
+if (!String.prototype.trim) {
+  String.prototype.trim = function () {
+    return this.replace(/^\s+|\s+$/gm, '');
+  };
+}
 (function($){
 	var _uniq_id = 0;
 	function uniq_id() {
@@ -35,7 +44,7 @@ document.write('<script type="text/javascript" src="' + (("https:" == document.l
 		.split(' ')).each(function(){_map[this.toLowerCase()] = this});
 	
 	// Load the charts from the HTML5 configurations.
-	var html5load = function() {
+	function html5load() {
 		$(this).each(function(){
 			$(this).attr('data-gv-applied', 'true');
 			$(this).change(function(){
@@ -132,7 +141,7 @@ document.write('<script type="text/javascript" src="' + (("https:" == document.l
 				// The sticky-* class logic is a Drupal optimization.
 				table = $("table:has(tbody):not(.sticky-header)", this).removeClass('sticky-table sticky-enabled');
 				$('caption:first', table).each(function(){
-					cfg.options['title'] = $(this).text();
+					cfg.options['title'] = $(this).text().trim();
 				});
 				table.insertAfter(this).hide();
 				$("table.sticky-header", this).remove();
@@ -235,7 +244,7 @@ document.write('<script type="text/javascript" src="' + (("https:" == document.l
 			
 			/* <witti:remove> */
 			for (i in cfg) {
-				_log(this, i + " = " + cfg[i]);
+				_log(this, i + " = " + JSON.stringify(cfg[i]));
 			}
 			/* </witti:remove> */
 			
@@ -258,18 +267,18 @@ document.write('<script type="text/javascript" src="' + (("https:" == document.l
 					var cell = $(this);
 					if (rowIndex == -1) {
 						var firstData = cell.next('td,th');
-						if (firstData.is('th') || isNaN(firstData.text())) {
-							_log($log, 'Adding string column: ' + $(this).text());
+						if (firstData.is('th') || isNaN(firstData.text().trim())) {
+							_log($log, 'Adding string column: ' + $(this).text().trim());
 							colType = 'string';
 						}
 						else {
-							_log($log, 'Adding number column: ' + $(this).text());
+							_log($log, 'Adding number column: ' + $(this).text().trim());
 							colType = 'number';
 						}
-						dt.addColumn(colType, $(this).text());
+						dt.addColumn(colType, $(this).text().trim());
 					}
 					else {
-						var t = cell.text();
+						var t = cell.text().trim();
 						if (t == '') {
 							t = null;
 						}
@@ -302,19 +311,19 @@ document.write('<script type="text/javascript" src="' + (("https:" == document.l
 		else {
 			$('thead tr', table).children('td,th').each(function(ix){
 				var cell = $('tbody tr:first', table).children('td,th').eq(ix);
-				if (cell.is('th') || isNaN(cell.text())) {
-					_log($log, 'Adding string column: ' + $(this).text());
-					dt.addColumn('string', $(this).text());
+				if (cell.is('th') || isNaN(cell.text().trim())) {
+					_log($log, 'Adding string column: ' + $(this).text().trim());
+					dt.addColumn('string', $(this).text().trim());
 				}
 				else {
-					_log($log, 'Adding number column: ' + $(this).text());
-					dt.addColumn('number', $(this).text());
+					_log($log, 'Adding number column: ' + $(this).text().trim());
+					dt.addColumn('number', $(this).text().trim());
 				}
 			});
 			$('tbody tr', table).each(function(){
 				var row = [];
 				$('th,td', this).each(function(){
-					var t = $(this).text();
+					var t = $(this).text().trim();
 					if (t == '') {
 						row.push(null);
 					}
