@@ -1,6 +1,6 @@
 /**
  * Witti Visualization
- * @version 1.3
+ * @version 1.3.1
  * http://www.witti.ws/project/witti-visualization
  * 
  * Copyright (c) 2012-2013, Greg Payne
@@ -13,7 +13,7 @@
 
 /* <witti:remove> */
 if (typeof JSON != 'object' || typeof JSON.stringify != 'function') {
-  document.write('<script src="http://www.json.org/json2.js"></script>');
+  document.write('<script src="//www.json.org/json2.js"></script>');
 }
 /* </witti:remove> */
 
@@ -187,8 +187,8 @@ if (!String.prototype.trim) {
       if (cfg.options['image'] == 'true' || cfg.options['image'] == 'print') {
 	// Load canvg JS.
 	if (typeof canvg != 'function') {
-	  $.getScript('http://canvg.googlecode.com/svn/trunk/rgbcolor.js');
-	  $.getScript('http://canvg.googlecode.com/svn/trunk/canvg.js');
+	  $.getScript('//canvg.googlecode.com/svn/trunk/rgbcolor.js');
+	  $.getScript('//canvg.googlecode.com/svn/trunk/canvg.js');
 	}
 	var $vis = $(this);
 	wrap_ready = function(){
