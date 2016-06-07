@@ -1,6 +1,6 @@
 /**
  * Witti Visualization
- * @version 1.3.1
+ * @version 1.3.2
  * http://www.witti.ws/project/witti-visualization
  * 
  * Copyright (c) 2012-2013, Greg Payne
@@ -42,7 +42,7 @@ if (!String.prototype.trim) {
 
   /* <witti:remove match="@_log\(.*?\);@s"> */
   var _log = null;
-  if ($.browser.msie && $.browser.version=="6.0" || typeof console != 'object') {
+  if (typeof console != 'object') {
     _log = function(el, m) {
       $(el).append('<div>' + m + '</div>');
     };
