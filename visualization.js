@@ -1,6 +1,6 @@
 /**
  * Witti Visualization
- * @version 1.3.2
+ * @version 1.3.3
  * http://www.witti.ws/project/witti-visualization
  * 
  * Copyright (c) 2012-2013, Greg Payne
@@ -187,8 +187,9 @@ if (!String.prototype.trim) {
       if (cfg.options['image'] == 'true' || cfg.options['image'] == 'print') {
 	// Load canvg JS.
 	if (typeof canvg != 'function') {
-	  $.getScript('//canvg.googlecode.com/svn/trunk/rgbcolor.js');
-	  $.getScript('//canvg.googlecode.com/svn/trunk/canvg.js');
+          $.getScript('//gabelerner.github.io/canvg/rgbcolor.js');
+          $.getScript('//gabelerner.github.io/canvg/StackBlur.js');
+	  $.getScript('//gabelerner.github.io/canvg/canvg.js');
 	}
 	var $vis = $(this);
 	wrap_ready = function(){
