@@ -199,6 +199,12 @@ if (!String.prototype.trim) {
 	    return;
 	  }
 
+	  /**
+	   * @todo Remove reliance on canvg
+	   * This can be done internally if we remove the 'print' resolution support.
+	   *     chart_wrapper.getChart().getImageURI();
+	   */
+	  
 	  // Create a new (hidden) canvas.
 	  var m = (cfg.options['image'] == 'print') ? 4 : 1;
 	  var c = $('<canvas style="display:none;">').attr('id', this.id + "-canvas");
