@@ -1,6 +1,6 @@
 /**
  * Witti Visualization
- * @version 1.3.3
+ * @version 1.3.4
  * http://www.witti.ws/project/witti-visualization
  * 
  * Copyright (c) 2012-2013, Greg Payne
@@ -297,6 +297,16 @@ if (!String.prototype.trim) {
   }
 
   function dt_load_table(dt, table, $log, options) {
+    function myIsNaN(n) {
+      // If it is clearly a number, return quickly.
+      if (!isNaN(n)) {
+        return false;
+      }
+      
+      // Allow standard US formats with commas as 3-digit separators
+      return !(/^-?[0-9]+(,[0-9]{3})+(\.[0-9]+)?$/m).test(n);
+    }
+    
     if (options.datatablerotate) {
       _log($log, 'Rotating the datatable.');
       var colIndex = 0;
@@ -307,7 +317,7 @@ if (!String.prototype.trim) {
 	  var cell = $(this);
 	  if (rowIndex == -1) {
 	    var firstData = cell.next('td,th');
-	    if (firstData.is('th') || isNaN(firstData.text().trim())) {
+	    if (firstData.is('th') || myIsNaN(firstData.text().trim())) {
 	      _log($log, 'Adding string column: ' + $(this).text().trim());
 	      colType = 'string';
 	    }
@@ -326,7 +336,7 @@ if (!String.prototype.trim) {
 	      switch (colType) {
 	      case 'number':
 		// type-cast to number.
-		t = 1*t;
+		t = 1 * t.replace(/[, ]/g, '');
 		break;
 	      default:
 		// keep as string.
@@ -351,7 +361,7 @@ if (!String.prototype.trim) {
     else {
       $('thead tr', table).children('td,th').each(function(ix){
 	var cell = $('tbody tr:first', table).children('td,th').eq(ix);
-	if (cell.is('th') || isNaN(cell.text().trim())) {
+	if (cell.is('th') || myIsNaN(cell.text().trim())) {
 	  _log($log, 'Adding string column: ' + $(this).text().trim());
 	  dt.addColumn('string', $(this).text().trim());
 	}
@@ -370,7 +380,7 @@ if (!String.prototype.trim) {
 	  else {
 	    switch (dt.getColumnType(row.length)) {
 	    case 'number':
-	      row.push(1 * t);
+	      row.push(1 * t.replace(/[, ]/g, ''));
 	      break;
 	    default:
 	      row.push(t);
