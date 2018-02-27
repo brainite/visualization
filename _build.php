@@ -6,20 +6,32 @@ if (isset($_SERVER['REQUEST_METHOD'])) {
 
 chdir(__DIR__);
 
+// Copy assets from external modules.
+$cmd = "rsync -a _lib/js-marker-clusterer/images/ dist/images/";
+echo "$cmd\n";
+system($cmd);
+
 // Handle the JS files.
 $js_files = array(
-  'visualization.js' => 'visualization.min.js',
+  'visualization.min.js' => array(
+    'visualization.js',
+    '_lib/js-marker-clusterer/src/markerclusterer.js',
+  ),
 );
-foreach ($js_files as $src_path => $min_path) {
+foreach ($js_files as $min_path => $src_paths) {
   // Select a temp path.
   $tmp_path = str_replace('.min.', '.tmp.', $min_path);
 
   // Load the source.
-  $src_js = trim(file_get_contents($src_path));
-  $src_docblock = '';
-  if (substr($src_js, 0, 2) === '/*') {
-    $src_parts = preg_split('@\n\s*\n@s', $src_js, 2);
-    $src_docblock = array_shift($src_parts) . "\n";
+  $src_js = '';
+  foreach ($src_paths as $src_path) {
+    $part_js = trim(file_get_contents($src_path));
+    $src_docblock = '';
+    if (substr($part_js, 0, 2) === '/*') {
+      $src_parts = preg_split('@\n\s*\n@s', $part_js, 2);
+      $src_docblock = array_shift($src_parts) . "\n";
+    }
+    $src_js .= $part_js;
   }
 
   // Remove code from production.
