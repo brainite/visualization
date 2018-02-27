@@ -69,7 +69,7 @@ foreach ($js_files as $min_path => $src_paths) {
 $version_git = trim(`git tag`);
 $version_js = 'v0';
 reset($js_files);
-$version_js_tmp = file_get_contents(key($js_files));
+$version_js_tmp = file_get_contents('visualization.js');
 if (preg_match('~@version\s+([\d\.]+)\s~s', $version_js_tmp, $arr)) {
   $version_js = 'v' . $arr[1];
 }
