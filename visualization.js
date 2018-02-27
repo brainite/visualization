@@ -1,6 +1,6 @@
 /**
  * Witti Visualization
- * @version 1.3.4
+ * @version 1.3.5
  * http://www.witti.ws/project/witti-visualization
  * 
  * Copyright (c) 2012-2018, Greg Payne
