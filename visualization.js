@@ -3,7 +3,7 @@
  * @version 1.3.4
  * http://www.witti.ws/project/witti-visualization
  * 
- * Copyright (c) 2012-2013, Greg Payne
+ * Copyright (c) 2012-2018, Greg Payne
  * Dual licensed under the MIT and GPL licenses.
  */
 
@@ -17,6 +17,46 @@ if (typeof JSON != 'object' || typeof JSON.stringify != 'function') {
 }
 /* </witti:remove> */
 
+// Init the witti namespace.
+if (typeof witti != 'object') {
+  var witti = {};
+}
+witti.visualization = {
+  map: {
+    status: 0,
+    instances: {},
+    load: function(id, f){
+      if (this.status == 2) {
+        f(id);
+      }
+      else {
+        this.instances[id] = f;
+        if (this.status == 0) {
+          this.status = 1;
+          witti.loadjs('https://maps.googleapis.com/maps/api/js?callback=witti.visualization.map.ready', 'google-maps-jsapi');
+        }
+      }
+    },
+    ready: function(id){
+      for (var i in this.instances) {
+        this.instances[i](i);
+      }
+    }
+  }
+};
+
+// Function to add SCRIPT tag
+witti.loadjs = function(url, id) {
+  var d = document, s = 'script';
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = url;
+  fjs.parentNode.insertBefore(js, fjs);
+};
+
+
 if (!String.prototype.trim) {
   String.prototype.trim = function () {
     return this.replace(/^\s+|\s+$/gm, '');
@@ -24,6 +64,7 @@ if (!String.prototype.trim) {
 }
 (function($){
   var _uniq_id = 0;
+  var i, j, k, v, row;
   function uniq_id() {
     _uniq_id++;
     return 'html5-gv-id-' + _uniq_id;
@@ -94,9 +135,9 @@ if (!String.prototype.trim) {
 
       // Customize the config using HTML5 attributes.
       _log(this, "Parsing config");
-      for (var i = 0; i < this.attributes.length; i++) {
-	var k = this.attributes[i].name.toLowerCase();
-	var v = this.attributes[i].value;
+      for (i = 0; i < this.attributes.length; i++) {
+	k = this.attributes[i].name.toLowerCase();
+	v = this.attributes[i].value;
 	if (k.indexOf('_') != -1) {
 	  var k1 = k.substr(k.indexOf('_') + 1);
 	  k = k.substr(0, k.indexOf('_'));
@@ -183,7 +224,147 @@ if (!String.prototype.trim) {
 	_log(this, "datatable error - unable to locate dt");
 	return;
       }
+      $(this).data('gv-datatable-object', dt);
+      
+      // Handle special cases
+      if (cfg.chartType == "X-MapMarkers") {
+        _log(this, "Loading X-MapMarkers");
+        var load_markers = function(id) {
+          v = {
+            "title":null,
+            "lat":null,
+            "lon":null
+          };
+          for (j = dt.getNumberOfColumns() - 1; j >= 0; j--) {
+            k = dt.getColumnLabel(j).toLowerCase();
+            if (k == "title") {
+              v.title = j;
+            }
+            else if (k == "lat" || k == "latitude") {
+              v.lat = j;
+            }
+            else if (k == "lon" || k == "longitude") {
+              v.lon = j;
+            }
+          }
+          if (v.lat === null) {
+            $(this).before('<p>ERROR: No Latitude column found</p>');
+            return;
+          }
+          if (v.lon === null) {
+            $(this).before('<p>ERROR: No Longitude column found</p>');
+            return;
+          }
+          
+          // By default, center of US.
+          var center = new google.maps.LatLng(37.09024, -95.712891);
+          var map = new google.maps.Map(document.getElementById(id), {
+            zoom: 3,
+            center: center,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+          });
+          
+          // Build the markers.
+          var marker;
+          var marker_bounds  = new google.maps.LatLngBounds();
+          for (i = dt.getNumberOfRows() - 1; i >= 0; i--) {
+            // Get the row values. Will look for lat/long/count
+            row = {
+              "lat" : dt.getValue(i, v.lat),
+              "lon" : dt.getValue(i, v.lon),
+              "title" : (v.title === null ? null : dt.getValue(i, v.title))
+            };
+            marker = new google.maps.Marker({
+              position: new google.maps.LatLng(row.lat, row.lon),
+              map: map,
+              title: "" + row.title
+            });
+            marker_bounds.extend(new google.maps.LatLng(marker.position.lat(), marker.position.lng()));
+          }
+          
+          var $map = $('#' + id);
+          if ($map.height() < 200) {
+            $map.height(400);
+          }
+          
+          // Zoom and center based on the markers
+          map.fitBounds(marker_bounds);
+          map.panToBounds(marker_bounds); 
+        };
+        witti.visualization.map.load(this.id, load_markers);
+        return;
+      }
+      if (cfg.chartType == "X-MapMarkerCluster") {
+        _log(this, "Loading X-MapMarkerCluster");
+        var load_markercluster = function(id) {
+          v = {
+            "cnt":null,
+            "lat":null,
+            "lon":null
+          };
+          for (j = dt.getNumberOfColumns() - 1; j >= 0; j--) {
+            k = dt.getColumnLabel(j).toLowerCase();
+            if (k == "count") {
+              v.cnt = j;
+            }
+            else if (k == "lat" || k == "latitude") {
+              v.lat = j;
+            }
+            else if (k == "lon" || k == "longitude") {
+              v.lon = j;
+            }
+          }
+          if (v.lat === null) {
+            $(this).before('<p>ERROR: No Latitude column found</p>');
+            return;
+          }
+          if (v.lon === null) {
+            $(this).before('<p>ERROR: No Longitude column found</p>');
+            return;
+          }
+          var markers = [], marker;
+          var marker_bounds  = new google.maps.LatLngBounds();
+          for (i = dt.getNumberOfRows() - 1; i >= 0; i--) {
+            // Get the row values. Will look for lat/long/count
+            row = {
+              "lat" : dt.getValue(i, v.lat),
+              "lon" : dt.getValue(i, v.lon),
+              "cnt" : (v.cnt === null ? 1 : dt.getValue(i, v.cnt))
+            };
+            marker = new google.maps.Marker({
+              position: new google.maps.LatLng(row.lat, row.lon),
+              title: "" + row.cnt
+            });
+            markers.push(marker);
+            marker_bounds.extend(new google.maps.LatLng(marker.position.lat(), marker.position.lng()));
+          }
+          
+          var $map = $('#' + id);
+          if ($map.height() < 200) {
+            $map.height(400);
+          }
+          // By default, center of US.
+          var center = new google.maps.LatLng(37.09024, -95.712891);
+          var map = new google.maps.Map(document.getElementById(id), {
+            zoom: 3,
+            center: center,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+          });
+          var options = {
+            imagePath: 'https://www.witti.ws/wcdn/l/lib/visualization/dist/images/m',
+            minimumClusterSize: 1
+          };
+          var markerCluster = new MarkerClusterer(map, markers, options);
+          
+          // Zoom and center based on the markers
+          map.fitBounds(marker_bounds);
+          map.panToBounds(marker_bounds); 
+        };
+        witti.visualization.map.load(this.id, load_markercluster);
+        return;
+      }
 
+      // Convert the chart to an image.
       if (cfg.options['image'] == 'true' || cfg.options['image'] == 'print') {
 	// Load canvg JS.
 	if (typeof canvg != 'function') {

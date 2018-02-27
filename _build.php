@@ -31,7 +31,7 @@ foreach ($js_files as $min_path => $src_paths) {
       $src_parts = preg_split('@\n\s*\n@s', $part_js, 2);
       $src_docblock = array_shift($src_parts) . "\n";
     }
-    $src_js .= $part_js;
+    $src_js .= ';' . $part_js;
   }
 
   // Remove code from production.
