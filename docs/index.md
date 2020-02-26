@@ -56,5 +56,6 @@ Link directly to a hosted version of the script:
 - [Basic line chart example using Brainite Visualization](basic-line-chart-cols)
 
 
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 <script type="text/javascript" src="https://stack.payne.run/wcdn/l/lib/visualization/visualization.min.js"></script>
 
