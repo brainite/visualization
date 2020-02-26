@@ -52,8 +52,8 @@ Link directly to a hosted version of the script:
 
 ## Other examples
 
-- [Basic line chart example with series in rows using Witti Visualization](basic-line-chart-rows)
-- [Basic line chart example using Witti Visualization](basic-line-chart-cols)
+- [Basic line chart example with series in rows using Brainite Visualization](basic-line-chart-rows)
+- [Basic line chart example using Brainite Visualization](basic-line-chart-cols)
 
 
 <script type="text/javascript" src="https://stack.payne.run/wcdn/l/lib/visualization/visualization.min.js"></script>
