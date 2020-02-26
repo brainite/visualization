@@ -144,4 +144,5 @@ title: Basic line chart example with series in rows using Witti Visualization
 		</tbody>
 	</table>
 
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 <script type="text/javascript" src="https://stack.payne.run/wcdn/l/lib/visualization/visualization.min.js"></script>
