@@ -63,6 +63,9 @@ foreach ($js_files as $min_path => $src_paths) {
     file_put_contents($min_path, $min_js);
   }
   unlink($tmp_path);
+
+  // Copy the path to docs/dist.
+  copy($min_path, "docs/dist/$min_path");
 }
 
 // Handle the git tag and version
