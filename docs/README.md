@@ -6,7 +6,7 @@ Visualization is an HTML5 wrapper to Google Visualizations to avoid dealing with
 
 Link directly to a hosted version of the script:
 
-1. Use directly: <a href="https://brainite.org/visualization/dist/visualization.min.js">https://brainite.org/visualization/dist/visualization.min.js</a>
+1. Use directly: <a href="https://www.brainite.org/visualization/dist/visualization.min.js">https://www.brainite.org/visualization/dist/visualization.min.js</a>
 1. Download the file to your server:
    1. Use either link above
    1. Access from Github: <a href="https://github.com/brainite/visualization">https://github.com/brainite/visualization</a>
@@ -37,4 +37,4 @@ The JavaScript converts all other data-gv-VARNAME attributes to Google Visualiza
 
 
 <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-<script type="text/javascript" src="https://brainite.org/visualization/dist/visualization.min.js"></script>
+<script type="text/javascript" src="https://www.brainite.org/visualization/dist/visualization.min.js"></script>
