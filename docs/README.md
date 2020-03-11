@@ -17,10 +17,10 @@ The following configurations are for Brainite Visualization:
 
 | Name | Default | Description |
 | ---- | ------- | ----------- |
-| data-gv-image="[true|print]" | "" | Convert the chart to an image client-side for easier copy-paste. If set to "true", then the image is created at web resolution. If set to "print", then the image is created at 4x web resolution. |
-| data-gv-datatable="[HTML ID]" | N/A | The ID of the HTML table that contains the data. This is unnecessary if the table is inside the chart &lt;div&gt;. |
-| data-gv-datatablehide="1" | "0" | Hide the HTML table that contains the data. This only applies to tables outside of the chart &lt;div&gt;. |
-| data-gv-datatablerotate="1" | "0" | Rotate the data from the HTML table so that the series exist in rows rather than columns. |
+| `data-gv-image="[true|print]"` | `""` | Convert the chart to an image client-side for easier copy-paste. If set to "true", then the image is created at web resolution. If set to "print", then the image is created at 4x web resolution. |
+| `data-gv-datatable="[HTML ID]"` | N/A | The ID of the HTML table that contains the data. This is unnecessary if the table is inside the chart &lt;div&gt;. |
+| `data-gv-datatablehide="1"` | `"0"` | Hide the HTML table that contains the data. This only applies to tables outside of the chart &lt;div&gt;. |
+| `data-gv-datatablerotate="1"` | `"0"` | Rotate the data from the HTML table so that the series exist in rows rather than columns. |
 
 The JavaScript converts all other data-gv-VARNAME attributes to Google Visualization option parameters.
 
