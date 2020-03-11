@@ -11,7 +11,7 @@ title: Basic line chart example with series in rows using Witti Visualization
 	Add JavaScript to the page</h3>
 <p>Add the JS to the page. If you use the witti CDN, the script tag would look like this:</p>
 <pre class="brush:jscript">
-&lt;script type="text/javascript" src="https://www.brainite.org/visualization/dist/visualization/visualization.min.js"&gt;&lt;/script&gt;</pre>
+&lt;script type="text/javascript" src="https://www.brainite.org/visualization/dist/visualization.min.js"&gt;&lt;/script&gt;</pre>
 <h3>
 	Add properly formatted HTML table to the page</h3>
 <ol>
@@ -145,4 +145,4 @@ title: Basic line chart example with series in rows using Witti Visualization
 	</table>
 
 <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-<script type="text/javascript" src="https://www.brainite.org/visualization/dist/visualization/visualization.min.js"></script>
+<script type="text/javascript" src="https://www.brainite.org/visualization/dist/visualization.min.js"></script>
