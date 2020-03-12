@@ -7,13 +7,13 @@ if (isset($_SERVER['REQUEST_METHOD'])) {
 chdir(__DIR__);
 
 // Copy assets from external modules.
-$cmd = "rsync -a _lib/js-marker-clusterer/images/ dist/images/";
+$cmd = "rsync -a _lib/js-marker-clusterer/images/ docs/dist/images/";
 echo "$cmd\n";
 system($cmd);
 
 // Handle the JS files.
 $js_files = array(
-  'visualization.min.js' => array(
+  'docs/dist/visualization.min.js' => array(
     'visualization.js',
     '_lib/js-marker-clusterer/src/markerclusterer.js',
   ),
@@ -63,9 +63,6 @@ foreach ($js_files as $min_path => $src_paths) {
     file_put_contents($min_path, $min_js);
   }
   unlink($tmp_path);
-
-  // Copy the path to docs/dist.
-  copy($min_path, "docs/dist/$min_path");
 }
 
 // Handle the git tag and version
