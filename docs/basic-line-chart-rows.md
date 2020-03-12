@@ -1,15 +1,15 @@
 ---
-title: Basic line chart example with series in rows using Witti Visualization
+title: Basic line chart example with series in rows using Brainite Visualization
 ---
 
 <p>The demo below shows a very basic application of the visualization library to create a line chart from a simple HTML table. The HTML table is converted to a DataTable, and the HTML data-* attributes on the div tag are converted to Google Visualization parameters. This particular approach signficantly reduces the logic that has to be implemented using the server-side language.</p>
 
 <h2>
 	Instructions</h2>
-<p>If you have the data in an HTML table, there are only a couple extra steps you'll need to take. This example assumes that the data for each series is stored in table rows. By default, series are expected to appear in columns as in <a href="/blog/2012/10/10/basic-line-chart-example-using-witti-visualization">this example</a>.</p>
+<p>If you have the data in an HTML table, there are only a couple extra steps you'll need to take. This example assumes that the data for each series is stored in table rows. By default, series are expected to appear in columns as in <a href="./basic-line-chart-cols">this example</a>.</p>
 <h3>
 	Add JavaScript to the page</h3>
-<p>Add the JS to the page. If you use the witti CDN, the script tag would look like this:</p>
+<p>Add the JS to the page. If you use the hosted JS, the script tag would look like this:</p>
 <pre class="brush:jscript">
 &lt;script type="text/javascript" src="https://www.brainite.org/visualization/dist/visualization.min.js"&gt;&lt;/script&gt;</pre>
 <h3>

@@ -35,11 +35,11 @@ foreach ($js_files as $min_path => $src_paths) {
   }
 
   // Remove code from production.
-  $parts = explode('<witti:remove', $src_js);
+  $parts = explode('<brainite:remove', $src_js);
   $src_js = array_shift($parts);
   $removes = array();
   foreach ($parts as $part) {
-    $part = explode('</witti:remove>', $part, 2);
+    $part = explode('</brainite:remove>', $part, 2);
     $src_js .= $part[1];
     $part = explode('>', $part[0], 2);
     if (trim($part[0]) !== '') {

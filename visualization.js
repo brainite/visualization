@@ -1,27 +1,27 @@
 /**
- * Witti Visualization
- * @version 1.3.5
- * http://www.witti.ws/project/witti-visualization
+ * Brainite Visualization
+ * @version 1.3.6
+ * https://www.brainite.org/visualization/
  * 
- * Copyright (c) 2012-2018, Greg Payne
+ * Copyright (c) 2012-2018, CPNP
  * Dual licensed under the MIT and GPL licenses.
  */
 
 //http://code.google.com/apis/ajax/playground/?type=visualization
-//autoload saves one hit but prevents dynamic loading of the witti library.
-//document.write('<script type="text/javascript" src="' + (("https:" == document.location.protocol) ? "https://" : "http://") + 'www.google.com/jsapi?autoload=' + encodeURIComponent('{"modules":[{"name":"visualization","version":"1","callback":"witti_visualization_prereqs"}]}') + '"></script>');
+//autoload saves one hit but prevents dynamic loading of the brainite library.
+//document.write('<script type="text/javascript" src="' + (("https:" == document.location.protocol) ? "https://" : "http://") + 'www.google.com/jsapi?autoload=' + encodeURIComponent('{"modules":[{"name":"visualization","version":"1","callback":"brainite_visualization_prereqs"}]}') + '"></script>');
 
-/* <witti:remove> */
+/* <brainite:remove> */
 if (typeof JSON != 'object' || typeof JSON.stringify != 'function') {
   document.write('<script src="//www.json.org/json2.js"></script>');
 }
-/* </witti:remove> */
+/* </brainite:remove> */
 
-// Init the witti namespace.
-if (typeof witti != 'object') {
-  var witti = {};
+// Init the brainite namespace.
+if (typeof brainite != 'object') {
+  var brainite = {};
 }
-witti.visualization = {
+brainite.visualization = {
   map: {
     status: 0,
     instances: {},
@@ -33,7 +33,7 @@ witti.visualization = {
         this.instances[id] = f;
         if (this.status == 0) {
           this.status = 1;
-          witti.loadjs('https://maps.googleapis.com/maps/api/js?callback=witti.visualization.map.ready', 'google-maps-jsapi');
+          brainite.loadjs('https://maps.googleapis.com/maps/api/js?callback=brainite.visualization.map.ready', 'google-maps-jsapi');
         }
       }
     },
@@ -46,7 +46,7 @@ witti.visualization = {
 };
 
 // Function to add SCRIPT tag
-witti.loadjs = function(url, id) {
+brainite.loadjs = function(url, id) {
   var d = document, s = 'script';
   var js, fjs = d.getElementsByTagName(s)[0];
   if (d.getElementById(id)) return;
@@ -81,7 +81,7 @@ if (!String.prototype.trim) {
     },
   };
 
-  /* <witti:remove match="@_log\(.*?\);@s"> */
+  /* <brainite:remove match="@_log\(.*?\);@s"> */
   var _log = null;
   if (typeof console != 'object') {
     _log = function(el, m) {
@@ -93,7 +93,7 @@ if (!String.prototype.trim) {
       console.log(el.id + ": " + m);
     };
   }
-  /* </witti:remove> */
+  /* </brainite:remove> */
 
   // Create a key-pair hash to translate case and/or any aliases to match Google's naming scheme.
   var _map = {"type" : "chartType"};
@@ -291,7 +291,7 @@ if (!String.prototype.trim) {
           map.fitBounds(marker_bounds);
           map.panToBounds(marker_bounds); 
         };
-        witti.visualization.map.load(this.id, load_markers);
+        brainite.visualization.map.load(this.id, load_markers);
         return;
       }
       if (cfg.chartType == "X-MapMarkerCluster") {
@@ -351,7 +351,7 @@ if (!String.prototype.trim) {
             mapTypeId: google.maps.MapTypeId.ROADMAP
           });
           var options = {
-            imagePath: 'https://www.witti.ws/wcdn/l/lib/visualization/dist/images/m',
+            imagePath: 'https://www.brainite.ws/wcdn/l/lib/visualization/dist/images/m',
             minimumClusterSize: 1
           };
           var markerCluster = new MarkerClusterer(map, markers, options);
@@ -360,7 +360,7 @@ if (!String.prototype.trim) {
           map.fitBounds(marker_bounds);
           map.panToBounds(marker_bounds); 
         };
-        witti.visualization.map.load(this.id, load_markercluster);
+        brainite.visualization.map.load(this.id, load_markercluster);
         return;
       }
 
@@ -448,12 +448,12 @@ if (!String.prototype.trim) {
 	};
       }
 
-      /* <witti:remove> */
+      /* <brainite:remove> */
       _log(this, JSON.stringify(cfg));
       for (i in cfg) {
 	_log(this, i + " = " + JSON.stringify(cfg[i]));
       }
-      /* </witti:remove> */
+      /* </brainite:remove> */
 
       _log(this, "drawing chart");
       var draw_wrapper = function() {
@@ -628,18 +628,18 @@ if (!String.prototype.trim) {
 
     if (typeof google == 'undefined') {
       var script = document.createElement("script");
-      script.src = "https://www.google.com/jsapi?callback=witti_visualization_prereqs";
+      script.src = "https://www.google.com/jsapi?callback=brainite_visualization_prereqs";
       script.type = "text/javascript";
       document.getElementsByTagName("head")[0].appendChild(script);
     }
     else {
-      witti_visualization_prereqs();
+      brainite_visualization_prereqs();
     }
   });
 })(jQuery);
 
 //Load the prereq libraries from Google.
-var witti_visualization_prereqs = function() {
+var brainite_visualization_prereqs = function() {
   // @TODO - Slow-load the table package rather than always loading it upfront.
   google.load("visualization", "1", {
     "packages" : ["corechart"],
