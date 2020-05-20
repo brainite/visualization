@@ -465,10 +465,10 @@ if (!String.prototype.trim) {
       
       if (typeof _loaders[cfg.chartType] != "undefined" && eval('with (google.visualization) {typeof ' + cfg.chartType + ';}') == 'undefined') {
 	if (_loaders[cfg.chartType].type == 'google') {
-	  google.load("visualization", "1", {
-	    "packages" : _loaders[cfg.chartType].packages,
-	    "callback" : draw_wrapper
+	  google.charts.load("current", {
+	    "packages" : _loaders[cfg.chartType].packages
 	  });
+	  google.charts.setOnLoadCallback(draw_wrapper);
 	}
       }
       else {
@@ -582,16 +582,16 @@ if (!String.prototype.trim) {
   $.fn.gv_edit = function() {
     var target_chart = $(this)[0];
     var wrapper = $(this).eq(0).data('gv_wrapper');
-    google.load('visualization', '1', {
-      "packages" : ['charteditor'],
-      "callback" : function() {
-	var editor = new google.visualization.ChartEditor();
-	google.visualization.events.addListener(editor, 'ok', function() { 
-	  wrapper = editor.getChartWrapper();  
-	  wrapper.draw(target_chart); 
-	}); 
-	editor.openDialog(wrapper);
-      }
+    google.charts.load('current', {
+      "packages" : ['charteditor']
+    });
+    google.charts.setOnLoadCallback(function() {
+      var editor = new google.visualization.ChartEditor();
+      google.visualization.events.addListener(editor, 'ok', function() { 
+        wrapper = editor.getChartWrapper();  
+        wrapper.draw(target_chart); 
+      }); 
+      editor.openDialog(wrapper);
     });
   }
   $.fn.gv_svg = function(open_window) {
@@ -628,9 +628,10 @@ if (!String.prototype.trim) {
 
     if (typeof google == 'undefined') {
       var script = document.createElement("script");
-      script.src = "https://www.google.com/jsapi?callback=brainite_visualization_prereqs";
+      script.src = "https://www.gstatic.com/charts/loader.js";
       script.type = "text/javascript";
       document.getElementsByTagName("head")[0].appendChild(script);
+      brainite_visualization_prereqs();
     }
     else {
       brainite_visualization_prereqs();
@@ -640,11 +641,16 @@ if (!String.prototype.trim) {
 
 //Load the prereq libraries from Google.
 var brainite_visualization_prereqs = function() {
+  // If google.charts does not exist, then wait.
+  if (typeof google == 'undefined' || typeof google.charts == 'undefined') {
+    setTimeout(brainite_visualization_prereqs, 50);
+    return;
+  }
+  
   // @TODO - Slow-load the table package rather than always loading it upfront.
-  google.load("visualization", "1", {
-    "packages" : ["corechart"],
-    "callback" : function() {
-      jQuery('*[data-gv-type]').change();
-    }
+  google.charts.load("current", {
+    "packages" : ["corechart"]});
+  google.charts.setOnLoadCallback(function() {
+    jQuery('*[data-gv-type]').change();
   });
 };
